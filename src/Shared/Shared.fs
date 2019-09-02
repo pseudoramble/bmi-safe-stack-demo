@@ -1,5 +1,8 @@
 namespace Shared
 
-type Counter = { Value : int }
+type BodyDescription = {
+  height: int
+  weight: int
+}
 
 

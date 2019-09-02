@@ -11,17 +11,18 @@ type OnChange = (Browser.Types.Event -> unit)
 
 type BmiFormProps = {
     onCalculate: OnCalculate;
-    onChange: OnChange
+    onHeightChange: OnChange;
+    onWeightChange: OnChange
   }
 
-let form (props: BmiFormProps) = 
+let form (props: BmiFormProps) =
   div [ ] [
     Field.div [ ] [
       Label.label [] [ str "Height (in.)" ]
       Control.div [] [
-        Input.number [ 
+        Input.number [
           Input.Placeholder "ex: 70";
-          Input.OnChange props.onChange;
+          Input.OnChange props.onHeightChange;
         ]
       ]
     ]
@@ -29,7 +30,10 @@ let form (props: BmiFormProps) =
     Field.div [ ] [
       Label.label [] [ str "Weight (lbs.)" ]
       Control.div [] [
-        Input.number [ Input.Placeholder "ex: 200" ]
+        Input.number [
+          Input.Placeholder "ex: 200";
+          Input.OnChange props.onWeightChange;
+        ]
       ]
     ]
 

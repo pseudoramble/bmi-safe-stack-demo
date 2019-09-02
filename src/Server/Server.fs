@@ -20,8 +20,8 @@ let port =
 let webApp = router {
     get "/api/init" (fun next ctx ->
         task {
-            let counter = {Value = 42}
-            return! json counter next ctx
+            let desc = { height = 72; weight = 200 }
+            return! json desc next ctx
         })
 }
 
