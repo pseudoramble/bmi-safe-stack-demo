@@ -21,6 +21,7 @@
             "preLaunchTask": "Watch Client",
             "url": "http://localhost:8080",
             "webRoot": "${workspaceFolder}/src/Client",
+            "runtimeExecutable": "/usr/bin/chromium",
             "sourceMaps": true,
             "sourceMapPathOverrides": {
                 "webpack:///*": "${workspaceFolder}/*",
