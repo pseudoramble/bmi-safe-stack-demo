@@ -1,13 +1,11 @@
 open System.IO
-open System.Threading.Tasks
 
-open Microsoft.AspNetCore.Builder
-open Microsoft.Extensions.DependencyInjection
-open FSharp.Control.Tasks.V2
+open Fable.Remoting.Server
+open Fable.Remoting.Giraffe
 open Giraffe
 open Saturn
-open Shared
 
+open Api
 
 let tryGetEnv = System.Environment.GetEnvironmentVariable >> function null | "" -> None | x -> Some x
 
@@ -17,16 +15,14 @@ let port =
     "SERVER_PORT"
     |> tryGetEnv |> Option.map uint16 |> Option.defaultValue 8085us
 
-let webApp = router {
-    get "/api/init" (fun next ctx ->
-        task {
-            let desc = { height = 72; weight = 200 }
-            return! json desc next ctx
-        })
-}
+let webApp : HttpHandler =
+  Remoting.createApi ()
+  |> Remoting.withRouteBuilder (fun typeName methodName -> sprintf "/api/%s/%s" typeName methodName)
+  |> Remoting.fromValue bmiApi
+  |> Remoting.buildHttpHandler
 
 let app = application {
-    url ("http://0.0.0.0:" + port.ToString() + "/")
+    url ("http://127.0.0.1:" + port.ToString() + "/")
     use_router webApp
     memory_cache
     use_static publicPath
