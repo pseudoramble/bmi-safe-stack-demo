@@ -13,11 +13,17 @@ open Thoth.Json
 open Messages
 open Shared
 
-type Model = { description: BodyDescription option }
+type Model = {
+  description: BodyDescription option
+  result: Bmi option
+  }
 
 // defines the initial state and initial command (= side-effect) of the application
 let init () : Model * Cmd<Msg> =
-  let initialModel = { description = Some { height = 0; weight = 0 } }
+  let initialModel = {
+    description = Some { height = 0; weight = 0 }
+    result = None
+    }
   (initialModel, Cmd.none)
 
 // The update function computes the next state of the application based on the
@@ -36,6 +42,9 @@ let update (msg : Msg) (currentModel : Model) : Model * Cmd<Msg> =
       (nextModel, Cmd.none)
     | Some desc, Calculate ->
       (currentModel, Api.calculate desc)
+    | Some desc, ShowCalcuationReuslt bmi ->
+      let nextModel  = { currentModel with result = Some bmi }
+      (nextModel, Cmd.none)
     | _ -> (currentModel, Cmd.none)
 
 let view (model : Model) (dispatch : Msg -> unit) =
@@ -55,6 +64,17 @@ let view (model : Model) (dispatch : Msg -> unit) =
         onHeightChange = (fun e -> dispatch (UpdateHeight (int32 !!e.target?value)))
         onWeightChange = (fun e -> dispatch (UpdateWeight (int32 !!e.target?value)))
       }
+    ]
+
+    Container.container [] [
+      Content.content [ Content.Modifiers [ Modifier.TextAlignment (Screen.All, TextAlignment.Centered) ] ] [
+        Heading.h4 [] [
+          str <|
+            match model.result with
+              Some res -> sprintf "Your BMI is %f" res.value
+              | None -> "Enter values and press calculate to determine BMI"
+        ]
+      ]
     ]
 
     Footer.footer [ ] [
