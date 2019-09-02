@@ -10,15 +10,10 @@ open Thoth.Fetch
 open Fulma
 open Thoth.Json
 
+open Messages
 open Shared
 
 type Model = { description: BodyDescription option }
-
-// The Msg type defines what events/actions can occur while the application is running
-// the state of the application changes *only* in reaction to these events
-type Msg =
-  | UpdateHeight of int
-  | UpdateWeight of int
 
 // defines the initial state and initial command (= side-effect) of the application
 let init () : Model * Cmd<Msg> =
@@ -39,8 +34,9 @@ let update (msg : Msg) (currentModel : Model) : Model * Cmd<Msg> =
       let nextModel = {
         currentModel with description = Some { height = desc.height; weight = w } }
       (nextModel, Cmd.none)
-    | _ ->
-      (currentModel, Cmd.none)
+    | Some desc, Calculate ->
+      (currentModel, Api.calculate desc)
+    | _ -> (currentModel, Cmd.none)
 
 let view (model : Model) (dispatch : Msg -> unit) =
   div [] [
@@ -55,7 +51,7 @@ let view (model : Model) (dispatch : Msg -> unit) =
         Heading.h3 [] [ str ("Determine your BMI" ) ]
       ]
       BmiForm.form {
-        onCalculate = (fun _ -> printfn "lol")
+        onCalculate = (fun _ -> dispatch Calculate)
         onHeightChange = (fun e -> dispatch (UpdateHeight (int32 !!e.target?value)))
         onWeightChange = (fun e -> dispatch (UpdateWeight (int32 !!e.target?value)))
       }
