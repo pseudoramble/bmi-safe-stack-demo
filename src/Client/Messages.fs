@@ -7,4 +7,4 @@ type Msg =
   | UpdateWeight of int
   | Calculate
   | ShowCalcuationReuslt of Bmi
-  | ShowCalculationError
+  | ShowCalculationError of string

@@ -10,5 +10,5 @@ type Bmi = {
 }
 
 type IBmiProtocol = {
-  calculate : BodyDescription -> Async<Bmi>
+  calculate : BodyDescription -> Async<Result<Bmi, string>>
 }
